@@ -20,3 +20,28 @@ Add this to your **Package.swift**:
 
 ```swift
 .package(url: "https://github.com/Mohanraj-Freelancer/MGDropdown.git", from: "1.0.5")
+
+
+🚀 Usage
+
+SwiftUI
+
+MGDropdownView(
+    items: countries,
+    displayKeyPath: \.self,
+    selected: $selectedCountry
+)
+.frame(height: 55)
+.padding()
+
+
+UIKit
+
+DropdownManager.shared.showDropdown(
+    from: myButton,
+    in: self.view,
+    items: countries,
+    displayKeyPath: \.self
+) { selected in
+    print(selected)
+}
