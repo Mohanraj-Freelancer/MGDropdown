@@ -1,0 +1,28 @@
+Pod::Spec.new do |s|
+  s.name             = 'MGDropdown'
+  s.version          = '1.0.0'
+  s.summary          = 'A clean, customizable dropdown for iOS (SwiftUI + UIKit).'
+
+  s.description      = <<-DESC
+MGDropdown is a powerful SwiftUI + UIKit dropdown component with:
+- Material animations
+- Search support
+- Tap-outside-to-dismiss
+- Pure SwiftUI implementation
+- UIKit dropdown with UITextField search
+DESC
+
+  s.homepage         = 'https://github.com/Mohanraj-Freelancer/MGDropdown'
+  s.license          = { :type => 'MIT', :file => 'LICENSE' }
+  s.author           = { 'Mohanraj G' => 'moto37970@gmail.com' }
+
+  s.source           = {
+    :git => 'https://github.com/Mohanraj-Freelancer/MGDropdown.git',
+    :tag => s.version.to_s
+  }
+
+  s.ios.deployment_target = '13.0'
+  s.swift_version         = '5.9'
+
+  s.source_files = 'Sources/MGDropdown/**/*.{swift}'
+end
