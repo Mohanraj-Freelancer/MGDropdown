@@ -5,6 +5,9 @@ import PackageDescription
 
 let package = Package(
     name: "MGDropdown",
+    platforms: [
+            .iOS(.v15)   // 👈 REQUIRED for SwiftUI
+        ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
