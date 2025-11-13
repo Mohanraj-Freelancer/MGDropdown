@@ -15,18 +15,12 @@ struct SwiftUIDemoView: View {
     @State private var selectedCountry: String?
 
     var body: some View {
-        VStack(spacing: 20) {
-
-            Text("SwiftUI Demo")
-                .font(.largeTitle)
-                .padding(.top, 40)
-
+        VStack {
             MGDropdownView(
                 items: countries,
                 displayKeyPath: \.self,
                 selected: $selectedCountry
             )
-            .frame(height: 55)
             .padding()
 
             Text("Selected: \(selectedCountry ?? "--")")
@@ -34,5 +28,6 @@ struct SwiftUIDemoView: View {
 
             Spacer()
         }
+        .padding()
     }
 }

@@ -7,7 +7,6 @@
 
 
 import SwiftUI
-import UIKit
 
 public struct MGDropdownView<T>: View where T: Hashable {
 
@@ -15,25 +14,30 @@ public struct MGDropdownView<T>: View where T: Hashable {
     private var items: [T]
     private var displayKeyPath: KeyPath<T, String>
 
-    @State private var anchorView = UIView()
+    @State private var isExpanded = false
+    private let rowHeight: CGFloat = 44
+    private let maxVisibleItems = 6
 
     public init(
         items: [T],
         displayKeyPath: KeyPath<T, String>,
         selected: Binding<T?>
     ) {
-        self._selection = selected
         self.items = items
         self.displayKeyPath = displayKeyPath
+        self._selection = selected
     }
 
     public var body: some View {
-        ZStack {
-            Button(action: openDropdown) {
+        VStack(alignment: .leading, spacing: 0) {
+
+            // BUTTON
+            Button(action: toggleDropdown) {
                 HStack {
                     Text(selectionTitle)
+                        .foregroundColor(selection == nil ? .blue : .black)
                     Spacer()
-                    Image(systemName: "chevron.down")
+                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         .foregroundColor(.gray)
                 }
                 .padding()
@@ -45,54 +49,55 @@ public struct MGDropdownView<T>: View where T: Hashable {
                 )
             }
 
-            // Anchor for UIKit dropdown
-            AnchorView { view in
-                self.anchorView = view
+            // DROPDOWN LIST
+            if isExpanded {
+                ScrollView {
+                    VStack(spacing: 0) {
+                        ForEach(items, id: \.self) { item in
+                            Button(action: {
+                                self.selection = item
+                                withAnimation(.spring()) {
+                                    isExpanded = false
+                                }
+                            }) {
+                                HStack {
+                                    Text(item[keyPath: displayKeyPath])
+                                        .foregroundColor(.black)
+                                    Spacer()
+                                }
+                                .padding()
+                                .frame(height: rowHeight)
+                            }
+                            .background(Color.white)
+                            .overlay(
+                                Rectangle()
+                                    .frame(height: 0.5)
+                                    .foregroundColor(.gray.opacity(0.3)),
+                                alignment: .bottom
+                            )
+                        }
+                    }
+                }
+                .frame(maxHeight: CGFloat(min(items.count, maxVisibleItems)) * rowHeight)
+                .background(Color.white)
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                )
+                .transition(.opacity.combined(with: .move(edge: .top)))
             }
-            .frame(width: 0, height: 0)
         }
+        .animation(.easeInOut(duration: 0.25), value: isExpanded)
     }
 
-    // MARK: - Helpers
     private var selectionTitle: String {
         selection.map { $0[keyPath: displayKeyPath] } ?? "Select"
     }
 
-    private func openDropdown() {
-        guard let window = UIWindow.keyWindow else { return }
-        guard let hostVC = window.rootViewController?.topMostViewController else { return }
-
-        DropdownManager.shared.showDropdown(
-            from: anchorView,
-            in: hostVC.view,
-            items: items,
-            displayKeyPath: displayKeyPath
-        ) { selectedItem in
-            self.selection = selectedItem
+    private func toggleDropdown() {
+        withAnimation {
+            isExpanded.toggle()
         }
-    }
-}
-
-extension UIWindow {
-    static var keyWindow: UIWindow? {
-        UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .flatMap { $0.windows }
-            .first { $0.isKeyWindow }
-    }
-}
-
-extension UIViewController {
-    var topMostViewController: UIViewController {
-        if let nav = self as? UINavigationController {
-            return nav.visibleViewController?.topMostViewController ?? nav
-        }
-        if let tab = self as? UITabBarController {
-            return tab.selectedViewController?.topMostViewController ?? tab
-        }
-        if let presented = presentedViewController {
-            return presented.topMostViewController
-        }
-        return self
     }
 }

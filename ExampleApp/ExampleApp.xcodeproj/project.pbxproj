@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6B5BF31C2EC5D38F001BA0B7 /* MGDropdown in Frameworks */ = {isa = PBXBuildFile; productRef = 6B5BF31B2EC5D38F001BA0B7 /* MGDropdown */; };
+		6B5BF3212EC5DE4C001BA0B7 /* MGDropdown in Frameworks */ = {isa = PBXBuildFile; productRef = 6B5BF3202EC5DE4C001BA0B7 /* MGDropdown */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,7 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6B5BF31C2EC5D38F001BA0B7 /* MGDropdown in Frameworks */,
+				6B5BF3212EC5DE4C001BA0B7 /* MGDropdown in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,7 +83,7 @@
 			);
 			name = ExampleApp;
 			packageProductDependencies = (
-				6B5BF31B2EC5D38F001BA0B7 /* MGDropdown */,
+				6B5BF3202EC5DE4C001BA0B7 /* MGDropdown */,
 			);
 			productName = ExampleApp;
 			productReference = 6B5BF2F92EC5CF10001BA0B7 /* ExampleApp.app */;
@@ -114,7 +114,7 @@
 			mainGroup = 6B5BF2F02EC5CF10001BA0B7;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				6B5BF31A2EC5D38F001BA0B7 /* XCRemoteSwiftPackageReference "MGDropdown" */,
+				6B5BF31F2EC5DE4C001BA0B7 /* XCRemoteSwiftPackageReference "MGDropdown" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6B5BF2FA2EC5CF10001BA0B7 /* Products */;
@@ -350,20 +350,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		6B5BF31A2EC5D38F001BA0B7 /* XCRemoteSwiftPackageReference "MGDropdown" */ = {
+		6B5BF31F2EC5DE4C001BA0B7 /* XCRemoteSwiftPackageReference "MGDropdown" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Mohanraj-Freelancer/MGDropdown.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.3;
+				minimumVersion = 1.0.4;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		6B5BF31B2EC5D38F001BA0B7 /* MGDropdown */ = {
+		6B5BF3202EC5DE4C001BA0B7 /* MGDropdown */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6B5BF31A2EC5D38F001BA0B7 /* XCRemoteSwiftPackageReference "MGDropdown" */;
+			package = 6B5BF31F2EC5DE4C001BA0B7 /* XCRemoteSwiftPackageReference "MGDropdown" */;
 			productName = MGDropdown;
 		};
 /* End XCSwiftPackageProductDependency section */
