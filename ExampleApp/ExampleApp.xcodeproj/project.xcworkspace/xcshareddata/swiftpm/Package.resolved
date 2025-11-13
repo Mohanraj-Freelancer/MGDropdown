@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Mohanraj-Freelancer/MGDropdown.git",
       "state" : {
-        "revision" : "2763f1eb3b2534272549cd949517cd2bc7536e58",
-        "version" : "1.0.4"
+        "revision" : "e02954e8961334e6a3e10ab3e3c2a8dd902546b7",
+        "version" : "1.0.5"
       }
     }
   ],

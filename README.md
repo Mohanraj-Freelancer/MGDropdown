@@ -19,29 +19,31 @@ A lightweight, reusable, customizable dropdown component for UIKit — with buil
 Add this to your **Package.swift**:
 
 ```swift
-.package(url: "https://github.com/Mohanraj-Freelancer/MGDropdown.git", from: "1.0.5")
+.package(url: "https://github.com/Mohanraj-Freelancer/MGDropdown.git", from: "1.0.6")
 
 
 🚀 Usage
 
-SwiftUI
+SwiftUI 🚀
 
 MGDropdownView(
     items: countries,
     displayKeyPath: \.self,
-    selected: $selectedCountry
+    selected: $selectedCountry,
+    showSearchBar: true
 )
 .frame(height: 55)
 .padding()
 
 
-UIKit
+UIKit 🚀
 
+DropdownManager.shared.showSearchBar = true
 DropdownManager.shared.showDropdown(
     from: myButton,
     in: self.view,
     items: countries,
     displayKeyPath: \.self
 ) { selected in
-    print(selected)
+    print("Selected:", selected)
 }
