@@ -8,15 +8,15 @@
 
 import UIKit
 
-final class DropdownManager {
-    static let shared = DropdownManager()
+public final class DropdownManager {
+    
+    @MainActor public static let shared = DropdownManager()
     private init() {}
     
     private let overlayTag = 9998
     private let dropdownTag = 9999
     
-    // Generic dropdown using KeyPath for display value
-    func showDropdown<T: Any>(
+    @MainActor public func showDropdown<T: Any>(
         from sourceView: UIView,
         in parentView: UIView,
         items: [T],
@@ -25,10 +25,8 @@ final class DropdownManager {
         rowHeight: CGFloat = 40,
         selection: @escaping (T) -> Void
     ) {
-        // Remove existing dropdowns
         hideDropdown(in: parentView, animated: false)
         
-        // Transparent overlay to detect outside taps
         let overlay = UIView(frame: parentView.bounds)
         overlay.backgroundColor = UIColor.black.withAlphaComponent(0.001)
         overlay.tag = overlayTag
@@ -36,20 +34,15 @@ final class DropdownManager {
         overlay.addGestureRecognizer(tap)
         parentView.addSubview(overlay)
         
-        // Create dropdown menu
         let menu = CommonDropdownView(items: items, displayKeyPath: displayKeyPath)
         menu.tag = dropdownTag
         menu.rowHeight = rowHeight
         
-        // Handle selection
         menu.onItemSelected = { [weak self, weak parentView] selectedItem in
             selection(selectedItem)
-            if let parent = parentView {
-                self?.hideDropdown(in: parent)
-            }
+            if let parent = parentView { self?.hideDropdown(in: parent) }
         }
         
-        // Positioning
         let convertedFrame = sourceView.convert(sourceView.bounds, to: parentView)
         let maxHeight = CGFloat(items.count > maxVisibleItems ? CGFloat(maxVisibleItems) * rowHeight : CGFloat(items.count) * rowHeight)
         let spaceBelow = parentView.bounds.height - convertedFrame.maxY
@@ -67,7 +60,12 @@ final class DropdownManager {
             height: menuHeight
         )
         parentView.addSubview(menu)
-        
+
+        // Auto-focus search
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            menu.searchBar.becomeFirstResponder()
+        }
+
         // Fade-in animation
         menu.alpha = 0
         UIView.animate(withDuration: 0.2) {
@@ -75,8 +73,7 @@ final class DropdownManager {
         }
     }
     
-    // Hide dropdown
-    func hideDropdown(in parentView: UIView, animated: Bool = true) {
+    @MainActor public func hideDropdown(in parentView: UIView, animated: Bool = true) {
         guard let dropdown = parentView.subviews.first(where: { $0.tag == dropdownTag }),
               let overlay = parentView.subviews.first(where: { $0.tag == overlayTag }) else { return }
         
@@ -93,7 +90,7 @@ final class DropdownManager {
         }
     }
     
-    @objc private func handleOutsideTap(_ sender: UITapGestureRecognizer) {
+    @MainActor @objc private func handleOutsideTap(_ sender: UITapGestureRecognizer) {
         guard let parent = sender.view?.superview else { return }
         hideDropdown(in: parent)
     }

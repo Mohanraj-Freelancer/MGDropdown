@@ -8,63 +8,98 @@
 
 import UIKit
 
-class CommonDropdownView<T>: UIView, UITableViewDelegate, UITableViewDataSource {
+public class CommonDropdownView<T>: UIView, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
     
     private let tableView = UITableView()
-    private let items: [T]
-    private let displayKeyPath: KeyPath<T, String>
-    var rowHeight: CGFloat = 40
-    var onItemSelected: ((T) -> Void)?
+    public let searchBar = UISearchBar()
     
-    init(items: [T], displayKeyPath: KeyPath<T, String>) {
+    private let items: [T]
+    private var filteredItems: [T]
+    
+    private let displayKeyPath: KeyPath<T, String>
+    
+    public var rowHeight: CGFloat = 40
+    public var onItemSelected: ((T) -> Void)?
+    public var isSearchEnabled: Bool = true   // enable/disable search
+    
+    // MARK: - Init
+    public init(items: [T], displayKeyPath: KeyPath<T, String>) {
         self.items = items
+        self.filteredItems = items
         self.displayKeyPath = displayKeyPath
         super.init(frame: .zero)
-        setupTableView()
+        setupView()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setupTableView() {
+    // MARK: - UI Setup
+    private func setupView() {
         backgroundColor = .white
+        
+        // Configure Search Bar
+        searchBar.placeholder = "Search..."
+        searchBar.delegate = self
+        searchBar.autocapitalizationType = .none
+        searchBar.autocorrectionType = .no
+        searchBar.isHidden = !isSearchEnabled
+        
+        // Table Setup
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.isScrollEnabled = true
         tableView.layer.cornerRadius = 8
         tableView.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5).cgColor
         tableView.layer.borderWidth = 0.5
-        tableView.layer.shadowColor = UIColor.lightGray.cgColor
-        tableView.layer.shadowOpacity = 0.8
-        tableView.layer.shadowOffset = CGSize(width: 0, height: 1)
-        tableView.layer.shadowRadius = 2
+        
+        // Layout
+        addSubview(searchBar)
         addSubview(tableView)
         
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: topAnchor),
+            searchBar.topAnchor.constraint(equalTo: topAnchor),
+            searchBar.leadingAnchor.constraint(equalTo: leadingAnchor),
+            searchBar.trailingAnchor.constraint(equalTo: trailingAnchor),
+            searchBar.heightAnchor.constraint(equalToConstant: 44),
+            
+            tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        items.count
+    // MARK: - Search Filtering
+    public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        let search = searchText.lowercased()
+        
+        filteredItems = search.isEmpty
+        ? items
+        : items.filter { $0[keyPath: displayKeyPath].lowercased().contains(search) }
+        
+        tableView.reloadData()
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    // MARK: - Table Delegates
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        filteredItems.count
+    }
+    
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         rowHeight
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-        cell.textLabel?.text = items[indexPath.row][keyPath: displayKeyPath]
+        cell.textLabel?.text = filteredItems[indexPath.row][keyPath: displayKeyPath]
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        onItemSelected?(items[indexPath.row])
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        onItemSelected?(filteredItems[indexPath.row])
     }
 }

@@ -1,0 +1,15 @@
+{
+  "originHash" : "e02fe0e240581bc206d87e3b4c3f540bfc252241a97a58fc2868bce5f05ac418",
+  "pins" : [
+    {
+      "identity" : "mgdropdown",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Mohanraj-Freelancer/MGDropdown.git",
+      "state" : {
+        "revision" : "d34e7b1cd72ad102a4361730be92e5e204711e97",
+        "version" : "1.0.2"
+      }
+    }
+  ],
+  "version" : 3
+}
