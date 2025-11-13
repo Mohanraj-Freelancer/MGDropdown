@@ -9,18 +9,13 @@
 import SwiftUI
 import UIKit
 
-public struct MGDropdownView<T>: View {
+public struct MGDropdownView<T>: View where T: Hashable {
 
     @Binding private var selection: T?
     private var items: [T]
     private var displayKeyPath: KeyPath<T, String>
 
-    private var buttonTitle: String {
-        if let selected = selection {
-            return selected[keyPath: displayKeyPath]
-        }
-        return "Select"
-    }
+    @State private var anchorView = UIView()
 
     public init(
         items: [T],
@@ -33,61 +28,70 @@ public struct MGDropdownView<T>: View {
     }
 
     public var body: some View {
-        Button(action: openDropdown) {
-            HStack {
-                Text(buttonTitle)
-                    .foregroundColor(.black)
-                Spacer()
-                Image(systemName: "chevron.down")
-                    .foregroundColor(.gray)
+        ZStack {
+            Button(action: openDropdown) {
+                HStack {
+                    Text(selectionTitle)
+                    Spacer()
+                    Image(systemName: "chevron.down")
+                        .foregroundColor(.gray)
+                }
+                .padding()
+                .background(Color.white)
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                )
             }
-            .padding()
-            .background(Color.white)
-            .cornerRadius(8)
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-            )
+
+            // Anchor for UIKit dropdown
+            AnchorView { view in
+                self.anchorView = view
+            }
+            .frame(width: 0, height: 0)
         }
     }
 
-    // MARK: - Show UIKit Dropdown
-    private func openDropdown() {
-        guard let root = UIWindow.keyWindow else { return }
+    // MARK: - Helpers
+    private var selectionTitle: String {
+        selection.map { $0[keyPath: displayKeyPath] } ?? "Select"
+    }
 
-        // Convert SwiftUI view to actual UIKit view frame
-        if let hostVC = root.rootViewController?.topMostViewController {
-            DropdownManager.shared.showDropdown(
-                from: hostVC.view,
-                in: hostVC.view,
-                items: items,
-                displayKeyPath: displayKeyPath
-            ) { selectedItem in
-                self.selection = selectedItem
-            }
+    private func openDropdown() {
+        guard let window = UIWindow.keyWindow else { return }
+        guard let hostVC = window.rootViewController?.topMostViewController else { return }
+
+        DropdownManager.shared.showDropdown(
+            from: anchorView,
+            in: hostVC.view,
+            items: items,
+            displayKeyPath: displayKeyPath
+        ) { selectedItem in
+            self.selection = selectedItem
         }
     }
 }
 
-// MARK: - Helpers to fetch top-most ViewController
 extension UIWindow {
     static var keyWindow: UIWindow? {
         UIApplication.shared.connectedScenes
-            .compactMap { ($0 as? UIWindowScene)?.keyWindow }
-            .first
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .first { $0.isKeyWindow }
     }
 }
 
 extension UIViewController {
     var topMostViewController: UIViewController {
-        if let presented = self.presentedViewController {
-            return presented.topMostViewController
-        }
         if let nav = self as? UINavigationController {
             return nav.visibleViewController?.topMostViewController ?? nav
         }
         if let tab = self as? UITabBarController {
             return tab.selectedViewController?.topMostViewController ?? tab
+        }
+        if let presented = presentedViewController {
+            return presented.topMostViewController
         }
         return self
     }

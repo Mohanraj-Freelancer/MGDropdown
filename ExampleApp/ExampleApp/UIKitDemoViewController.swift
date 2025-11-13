@@ -47,11 +47,11 @@ class UIKitDemoViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            button.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, offset: 40),
+            button.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
             button.widthAnchor.constraint(equalToConstant: 200),
             button.heightAnchor.constraint(equalToConstant: 50),
 
-            selectedLabel.topAnchor.constraint(equalTo: button.bottomAnchor, offset: 20),
+            selectedLabel.topAnchor.constraint(equalTo: button.bottomAnchor, constant: 20),
             selectedLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
