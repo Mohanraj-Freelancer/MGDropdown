@@ -19,4 +19,4 @@ A lightweight, reusable, customizable dropdown component for UIKit — with buil
 Add this to your **Package.swift**:
 
 ```swift
-.package(url: "https://github.com/Mohanraj-Freelancer/MGDropdown.git", from: "1.0.1")
+.package(url: "https://github.com/Mohanraj-Freelancer/MGDropdown.git", from: "1.0.3")
